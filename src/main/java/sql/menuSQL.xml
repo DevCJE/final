@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="child.menu">
+  <insert id="menuWriteOk" parameterType="child.menu.model.MenuDTO">
+            insert into 
+  			child_bob_menu 
+  		    values(
+  			child_bob_menu_idx.nextval,
+  			#{bob1_image},
+  			#{bob2_image},
+  			#{bob3_image},
+  			#{bob1_name},
+  			#{bob1_content},
+  			#{bob2_name},
+  			#{bob2_content},
+  			#{bob3_name},
+  			#{bob3_content},
+  			#{menu_date}			
+  			)
+  </insert>
+  <select id="menuChart" resultType="child.menu.model.MenuDTO">
+           select * from child_bob_menu where menu_date=#{calender}                     
+           
+  </select>
+  <select id="menuUpdateForm" resultType="child.menu.model.MenuDTO">
+           select * from child_bob_menu where menu_date=#{menu_date}
+  </select>
+  <update id="menuUpdateOk" parameterType="child.menu.model.MenuDTO">
+        update child_bob_menu
+  		set
+  		bob1_image=#{bob1_image},
+  		bob2_image=#{bob2_image},
+  		bob3_image=#{bob3_image},
+  		bob1_name=#{bob1_name},
+  		bob1_content=#{bob1_content},
+  		bob2_name=#{bob2_name},
+  		bob2_content=#{bob2_content},
+  		bob3_name=#{bob3_name},
+  		bob3_content=#{bob3_content}
+  		where menu_date=#{menu_date}    
+  </update>
+  <delete id="menuDeleteOk" parameterType="child.menu.model.MenuDTO">
+        delete 
+        from
+  		child_bob_menu	
+  		where 
+  		menu_date=#{menu_date}
+  </delete>
+  <select id="infoImage" resultType="child.menu.model.MenuDTO">
+        select * from child_bob_menu where idx=#{idx}
+  </select>
+  <select id="monthCalender" resultType="child.menu.model.MenuDTO">
+        select * from child_bob_menu
+  </select>
+  </mapper>

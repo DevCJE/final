@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="child.itnMsg">
+	<select id="itnMsgList" resultType="child.itnmsg.model.itnMsgDTO">
+	 <![CDATA[
+	select * from
+   	(select rownum as rnum,a.* from(select * from child_intranet_message order by idx desc)a)b 
+   	where rnum>=#{startNum} and rnum<=#{endNum}
+	]]>
+	</select>
+	
+	<select id="itnGetTotalCnt" resultType="int" parameterType="String">
+	select count(*) from child_intranet_message where send_name=#{send_name} and send_del='N'
+	</select>
+
+	<insert id="itnMsgWrite" parameterType="child.itnmsg.model.itnMsgDTO">
+	insert into child_intranet_message values(child_intranet_message_idx.nextval,#{subject},#{content},#{recv_name},#{send_name},'N','N',sysdate,0)
+	</insert>
+
+	<select id="itnMsgContent" resultType="child.itnmsg.model.itnMsgDTO" parameterType="int">
+	select * from child_intranet_message where idx=#{idx}
+	</select>
+	
+	<update id="itnMsgView" parameterType="map">
+	update child_intranet_message set message_view=message_view+1 where idx=#{idx} and send_name=#{sendname}
+	</update>
+	
+	<select id="itnMsgViews" resultType="int" parameterType="String">
+	select count(recv_name) from child_intranet_message where send_name=#{send_name} and message_view=0 and recv_del='N'
+	</select>
+	
+	<select id="itnMsgRecvList" resultType="child.itnmsg.model.itnMsgDTO">
+	 <![CDATA[
+	select * from
+   	(select rownum as rnum,a.* from(select * from child_intranet_message order by idx desc)a)b 
+   	where rnum>=#{startNum} and rnum<=#{endNum}
+	]]>
+	</select>
+	
+	<select id="itnGetTotalRecvCnt" resultType="int" parameterType="String">
+	select count(*) from child_intranet_message where recv_name=#{recv_name} and recv_del='N'
+	</select>
+	
+	<select id="itnMsgRecvContent" resultType="child.itnmsg.model.itnMsgDTO" parameterType="int">
+	select * from child_intranet_message where idx=#{idx}
+	</select>
+	
+	<update id="itnSendDel" parameterType="map">
+	update child_intranet_message set send_del='Y' where send_name=#{sendname} and idx=#{idx}
+	</update>
+	
+	<update id="itnRecvDel" parameterType="map">
+	update child_intranet_message set recv_del='Y' where recv_name=#{recvname} and idx=#{idx}
+	</update>
+	
+	<update id="itnMsgCancel" parameterType="int">
+	update child_intranet_message set recv_del='Y',send_del='Y' where idx=#{idx}
+	</update>
+	
+	<select id="itnSelectList" resultType="child.member.model.memberDTO">
+		select * from child_member where auth>3
+	</select>
+	
+</mapper>

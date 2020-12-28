@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  
+  <mapper namespace="child.dosing">
+  	<!-- 
+  	<insert id="bbsWrite" parameterType="yong.bbs.model.BbsDTO">
+ 		<![CDATA[
+ 			insert into jsp_bbs
+ 			values
+ 			(jsp_bbs_idx.nextval,#{writer},#{pwd},#{subject},#{content},sysdate,0,0,0,0)
+ 		]]>
+ 	</insert>
+  	-->
+  	
+  	
+  	
+  	<insert id="dosingWrite" parameterType="child.dosing.model.dosingDTO">
+  		insert into child_dosing values(child_dosing_idx.nextval,#{child_idx},#{child_name},#{client},#{symtom},#{dosing_class},#{medicine},#{dosing_capacity},3,#{dosing_date},#{dosing_time},#{dosing_keep},#{report_writer_name},#{etc},#{confirm},#{sig_time},#{id})
+  	</insert>
+  	
+  	
+  	<!-- signature -->
+  	<insert id="dosing_signature" parameterType="hashmap">
+  		insert into child_dosing_signature values(#{code1},#{code2},#{client},#{child_name},#{time},#{idx})
+  	</insert>
+  	<select id="dosing_GETsignature" resultType="child.dosing.model.EncodeDTO" parameterType="hashmap">
+  		select * from child_dosing_signature where client=#{client} and time=#{sig_time}
+  	</select>
+  	
+  	<select id="dosing_GETsignatureDoc" resultType="child.dosing.model.EncodeDTO" parameterType="hashmap">
+  		select * from child_dosing_signature where idx=#{idx}
+  	</select>
+  	
+  	
+  	<!-- signature -->
+  	
+  	
+  	<select id="dosing_getAllChild" resultType="child.dosing.model.dosingDTO">
+  		select * from child_dosing order by child_name, idx desc
+  	</select>
+
+  	<select id="dosing_getAllChildId" resultType="child.dosing.model.dosingDTO">
+  		select * from child_dosing where id = #{id} order by idx desc
+  	</select>
+  	
+  	<select id="dosing_getChildInfo" resultType="child.dosing.model.dosingDTO">
+  		select * from child_dosing where child_idx = #{child_idx} order by idx desc
+  	</select>
+	<select id="dosing_getSpecificChildInfo" resultType="child.dosing.model.dosingDTO">
+  		select * from child_dosing where idx = #{idx} order by idx desc
+  	</select>
+  	<select id="dosing_getAllChildByMonth" resultType="child.dosing.model.dosingDTO">
+  		<!-- select * from child_dosing where dosing_date = #{ MONTH } -->
+  		<!-- select * from child_dosing where substr(dosing_date,1,7) = #{ YEARANDMONTH } -->
+  		select * from child_dosing where to_char(dosing_date,'mm') = #{month}
+  	</select>
+  	<select id="dosing_getAllMonthAvailable" resultType="String">
+  		select to_char(dosing_date,'mm') from child_dosing
+  	</select>
+  	<update id="dosingUpdateReport" parameterType="hashmap">
+  		update child_dosing set etc = #{content} where idx=#{idx}
+  	</update>
+  	<update id="dosing_confirm" parameterType="hashmap">
+  		update child_dosing set confirm = #{confirm} where idx=#{idx}
+  	</update>
+  	
+  	<select id="dosingMember" resultType="child.member.model.memberDTO">
+  		select * from child_member where id=#{name}
+  	</select>
+
+  	
+  	<delete id="dosing_delete">
+  		delete from child_dosing where idx = #{ idx }
+  	</delete>
+  	
+  	<select id="dosingDateSearch" parameterType="hashmap" resultType="child.dosing.model.dosingDTO">
+  	
+  	<if test=" id != 'none'">
+  		<![CDATA[
+ 	 		select * from child_dosing where id=#{id} and dosing_date >= #{start} and dosing_date <= TO_DATE(#{end})+0.99999 order by idx desc
+ 	 	]]>
+ 	</if>
+ 	<if test=" id == 'none'">
+ 	  	<![CDATA[
+ 	 		select * from child_dosing where dosing_date >= #{start} and dosing_date <= TO_DATE(#{end})+0.99999 order by idx desc
+ 	 	]]>
+ 	</if>
+    </select>
+    
+    <select id="dosingAdminNameSearch" resultType="child.dosing.model.dosingDTO">
+  	select * from child_dosing 
+  	where child_name like '%'||#{name}||'%'
+    </select>
+    
+    <select id="dosingAdminNameSearch2" resultType="child.dosing.model.dosingDTO">
+  	select * from child_dosing
+  	where client like '%'||#{name}||'%'
+    </select>
+    
+    <select id="cctvGetRegionInfo" resultType="String">
+    select safe_cctv_region from child_safe_cctv
+    </select>
+    <insert id="cctvAddRegion" parameterType="String">
+    	insert into child_safe_cctv values(child_safe_cctv_idx.nextval, 'cctv1', 'H반', #{region}, 'none', 'none','none','none')
+    </insert>
+    <delete id="cctvDelRegion" parameterType="String">
+    	delete from child_safe_cctv where safe_cctv_region = #{region}
+    </delete>
+    
+  </mapper>
+  

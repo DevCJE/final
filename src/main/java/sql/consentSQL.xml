@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="child.consent">
+  
+  <select id="consentCntTotal" resultType="Integer">
+ 		<![CDATA[
+ 			select count(*) from child_come_home
+ 		]]>
+  </select>
+  
+  <select id="consentCnt" resultType="Integer" parameterType="Integer">
+ 		<![CDATA[
+ 			select count(*) from child_come_home
+ 				where member_idx = #{member_idx}
+ 		]]>
+  </select>
+  
+  <select id="consentList" resultType="child.consent.model.ConsentDTO" parameterType="hashmap">
+ 		<![CDATA[
+ 			select * from
+ 				(select rownum as rnum, a.* from (select * from child_come_home where member_idx = #{member_idx} order by idx desc, member_idx)a where rownum <= #{endNum} ) b
+ 					where rnum >= #{startNum}
+ 		]]>
+  </select>
+  
+  <insert id="consentWrite" parameterType="child.consent.model.ConsentDTO">
+  	<![CDATA[
+  		insert into child_come_home
+  			values
+  			(child_come_home_idx.nextval,#{member_idx},sysdate,#{time},#{type},#{name},#{tel},'no','no')
+  	]]>
+  </insert>
+  
+  <select id="consentContent" resultType="child.consent.model.ConsentDTO" parameterType="Integer">
+ 		<![CDATA[
+ 			select * from child_come_home where idx = #{idx}
+ 		]]>
+  </select>
+  
+   <select id="consentReplyContent" resultType="child.consent.model.ConsentReplyDTO" parameterType="Integer">
+ 		<![CDATA[
+ 			select * from child_come_home_reply where come_home_idx = #{idx} order by idx desc
+ 		]]>
+  </select>
+  
+  <insert id="consentReplyWrite" parameterType="child.consent.model.ConsentReplyDTO">
+  	<![CDATA[
+  		insert into child_come_home_reply
+  			values
+  			(child_come_home_reply_idx.nextval,#{come_home_idx},#{content},sysdate)
+  	]]>
+  </insert>
+  
+  <select id="consentDateSearch" resultType="child.consent.model.ConsentDTO" parameterType="hashmap">
+ 		<![CDATA[
+ 			select * from
+ 				(select rownum as rnum, a.* from (select * from child_come_home
+ 				where writedate >= #{calenderstart} and writedate <= TO_DATE(#{calenderend})+0.99999 and member_idx = #{member_idx}
+ 				order by idx desc, member_idx)a where rownum <= #{endNum} ) b
+ 					where rnum >= #{startNum}
+ 		]]>
+  </select>
+  
+   <select id="consentSearchCnt" resultType="Integer" parameterType="hashmap">
+ 		<![CDATA[
+ 			select count(*) from child_come_home
+ 				where member_idx = #{member_idx} and writedate >= #{calenderstart} and writedate <= TO_DATE(#{calenderend})+0.99999
+ 		]]>
+  </select>
+  
+  <select id="consentGetNameChild" resultType="String" parameterType="Integer">
+ 		<![CDATA[
+ 			select namechild from child_member
+ 				where idx = #{member_idx}
+ 		]]>
+  </select>
+  
+  <select id="consentAdminList" resultType="child.consent.model.ConsentDTO" parameterType="hashmap">
+ 		<![CDATA[
+ 			select * from
+ 				(select rownum as rnum, a.* from (select * from child_come_home order by idx desc, name desc)a where rownum <= #{endNum} ) b
+ 					where rnum >= #{startNum}
+ 		]]>
+  </select>
+  
+  <select id="consentAdminDateSearchCnt" resultType="Integer" parameterType="hashmap">
+ 		<![CDATA[
+ 			select count(*) from child_come_home
+ 				where writedate >= #{calenderstart} and writedate <= TO_DATE(#{calenderend})+0.99999
+ 		]]>
+  </select>
+  
+  <select id="consentAdminDateSearch" resultType="child.consent.model.ConsentDTO" parameterType="hashmap">
+ 		<![CDATA[
+ 			select * from
+ 				(select rownum as rnum, a.* from (select * from child_come_home
+ 				where writedate >= #{calenderstart} and writedate <= TO_DATE(#{calenderend})+0.99999
+ 				order by idx desc, member_idx)a where rownum <= #{endNum} ) b
+ 					where rnum >= #{startNum}
+ 		]]>
+  </select>
+  
+    <select id="consentAdminNameSearchCnt" resultType="Integer" parameterType="hashmap">
+ 		<if test="searchgroup == 'name'">
+	        <![CDATA[
+		     	select count(*) from child_come_home 
+	        		where name like '%'||#{search}||'%'
+	        	order by idx desc
+		   	]]>
+	   	</if>
+	   	<if test="searchgroup == 'namechild'">
+	        <![CDATA[
+		     	select count(*) from (select a.namechild as namechild, b.* from child_member a, child_come_home b
+    			where a.idx = b.member_idx)c
+	        	where namechild like '%'||#{search}||'%'
+	        	order by idx desc
+		   	]]>
+	   	</if>
+  </select>
+  
+  <select id="consentAdminNameSearch" resultType="child.consent.model.ConsentDTO" parameterType="hashmap">
+        <if test="searchgroup == 'name'">
+	        <![CDATA[
+		     	select * from 
+	        	(select rownum as rnum,a.* from 
+	        	(select * from child_come_home 
+	        		where name like '%'||#{search}||'%'
+	        	order by idx desc)a)b 
+	        	where rnum>=#{startNum} and rnum<=#{endNum} 
+		   	]]>
+	   	</if>
+	   	<if test="searchgroup == 'namechild'">
+	        <![CDATA[
+		     	select * from 
+	        	(select rownum as rnum,d.* from 
+	        	(select c.* from (select a.namechild as namechild, b.* from child_member a, child_come_home b
+    			where a.idx = b.member_idx)c
+	        	where namechild like '%'||#{search}||'%'
+	        	order by idx desc)d)e 
+	        	where rnum>=#{startNum} and rnum<=#{endNum} 
+		   	]]>
+	   	</if>
+  </select>
+  <update id="consentConfirm" parameterType="child.consent.model.ConsentDTO">
+  	<![CDATA[
+  		update child_come_home
+  		set confirm = 'yes' , reply = #{reply}
+  		where idx = #{idx}
+  	]]>
+  </update>
+  </mapper>

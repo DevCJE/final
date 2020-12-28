@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+								http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+								http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<context:component-scan base-package="child" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan> <!-- 컨트롤러 자동 등록 context : component - scan -->
+	
+	<!--  email -->
+ 	<bean id="mailSender" class ="org.springframework.mail.javamail.JavaMailSenderImpl" >
+        <property name="host" value="smtp.gmail.com" />
+        <property name="port" value="587" />
+        <property name="defaultEncoding" value="utf-8"/>
+        <property name="username" value="ReceiverKinderGarten@gmail.com"/>
+        <property name="password" value="star1988"/>
+       
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.auth">true</prop>
+            </props>
+        </property>
+       
+    </bean>
+	<bean id="email" class="email.Email">
+    </bean>
+    <bean id="emailSender" class="email.EmailSender">
+    </bean>
+
+	
+	<!--  configs 아래 빈을 이용하여 autowired를 통해 멤버변수의 setter를 통한 bean의 property값을 집어넣지 않더라도 자동으로 설정값을 잡아준다.  -->
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+	
+	<bean id = "multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name = "maxUploadSize">
+			<value>9999999999</value>
+		</property>
+	</bean>
+	
+	<!--  Service 시작 -->
+
+<!--  Mybatis sqlSessionTemplate 설정 예제
+	<bean id="empDAO" class="yong.emp.model.EmpDAOImple">
+		<constructor-arg>
+			<ref bean="sqlSessionTemplate"/>
+		</constructor-arg>
+	</bean>
+ -->
+	<bean id="consentDAO" class="child.consent.model.ConsentDAOImple">
+ 		<constructor-arg>
+ 			<ref bean="sqlSessionTemplate"/>
+ 		</constructor-arg>
+ 	</bean>
+ 	<bean id="albumDAO" class="child.album.model.AlbumDAOImple">
+ 		<constructor-arg>
+ 			<ref bean="sqlSessionTemplate"/>
+ 		</constructor-arg>
+ 	</bean>
+ 	<bean id="albumCommentDAO" class="child.album.model.AlbumCommentDAOImple">
+ 		<constructor-arg>
+ 			<ref bean="sqlSessionTemplate"/>
+ 		</constructor-arg>
+ 	</bean>
+ 	<bean id="memberDAO" class="child.member.model.memberDAOImple">
+		<constructor-arg>
+			<ref bean="sqlSessionTemplate"/>
+		</constructor-arg>
+	</bean> 
+	<bean id="noteDAO" class="child.note.model.noteDAOImple">
+		<constructor-arg>
+			<ref bean="sqlSessionTemplate"/>
+		</constructor-arg>
+	</bean>
+	<bean id="menuDAO" class="child.menu.model.MenuDAOImple">
+	      <constructor-arg>
+	         <ref bean="sqlSessionTemplate"/>
+	      </constructor-arg>
+	</bean>
+   	<bean id="noticeDAO" class="child.notice.model.noticeDAOImple">
+	      <constructor-arg>
+	         <ref bean="sqlSessionTemplate"/>
+	      </constructor-arg>
+	</bean>
+	
+	<bean id="notecoDAO" class="child.note.model.notecoDAOImple">
+		<constructor-arg>
+			<ref bean="sqlSessionTemplate"/>
+		</constructor-arg>
+	</bean>
+	<bean id="calDAO" class="child.calendar.model.calDAOImple">
+	      <constructor-arg>
+	         <ref bean="sqlSessionTemplate"/>
+	      </constructor-arg>
+	</bean>
+	<bean id="rollDAO" class="child.roll.model.rollDAOImple">
+		<constructor-arg>
+			<ref bean="sqlSessionTemplate"/>
+		</constructor-arg>
+	
+	</bean>
+	<bean id="docDAO" class="child.document.model.docDAOImple">
+			<constructor-arg>
+				<ref bean="sqlSessionTemplate"/>
+			</constructor-arg>
+	</bean>
+	<bean id="dosingDAO" class="child.dosing.model.dosingDAOImple">
+		<constructor-arg>
+			<ref bean="sqlSessionTemplate"/> 
+		</constructor-arg>
+	</bean>
+	<bean id="adminDAO" class="child.member.admin.model.AdminDAOImple">
+	      <constructor-arg>
+	         <ref bean="sqlSessionTemplate"/>
+	      </constructor-arg>
+	</bean>
+	<bean id="imDAO" class="child.itnmsg.model.itnMsgDAOImple">
+	      <constructor-arg>
+	         <ref bean="sqlSessionTemplate"/>
+	      </constructor-arg>
+	</bean>
+   <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	   <property name="prefix" value="/WEB-INF/views/"/>
+	   <property name="suffix" value=".jsp"/>
+	   <property name="order" value="1"/>
+	</bean>
+	
+	<!--  파일 다운로드 관련 ViewResolver이며 이 Bean 이름은 BeanNameViewResolver와 연결되어서 해당 down으로 이름이 되어진 view를 찾아 작동하게 된다. -->
+	<bean id = "down" class = "child.view.DownloadView"/>
+	
+	<bean id="yongJson" class = "org.springframework.web.servlet.view.json.MappingJacksonJsonView"></bean>
+	
+	<!--  BeanNameViewResolver로 인해서 ViewResolver는 View로 이동할때 빈즈의 이름을 토대로 찾게 되는데 위에 InternalResourceViewResolver가 있으니
+			ViewResolver는 두개가 되는 셈이다. 이로 인해서 Property에서 Order를 직접 설정하여 0번부터 숫자가 늘어날수록 후순위 적용이 되므로 이를 이용하여
+			두개 이상의 ViewResolver를 사용하지만 가장 먼저 BeanNameViewResolver를 사용하고 이후에 일반 ViewResolver를 사용하고 있음을 알 수 있다. -->
+	<bean class = "org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0"/>
+	</bean>
+	
+	<!-- 1. dataSource 설정 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@yongstudy.iptime.org:9000:orcl" />
+		<property name="username" value="project02_04" />
+		<property name="password" value="project02_04" />
+	</bean>
+	<!--  2. 트랜잭션 관리자 등록 -->
+	<bean id = "transactionManager" class = "org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	<!-- 3. 마이바티스 설정 -->
+	 <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:/mybatis-config.xml"/>
+	</bean>        
+	<!-- 4.  위의 부분을 이제 다룰 수 있는 리모컨(Template)기능 추가 -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean" />
+	</bean>
+
+<mvc:annotation-driven/>
+
+</beans>

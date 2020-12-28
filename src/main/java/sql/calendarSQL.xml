@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="child.calendar">
+ 	<select id="cal_list" parameterType="String" resultType="child.calendar.model.calDTO">
+  		select * from child_schedule where cal_date>=#{callist}
+  	</select>
+  	
+  	<select id="cal_view" parameterType="Integer" resultType="child.calendar.model.calDTO">
+  		select * from child_schedule where idx = #{idx}
+  	</select> 
+  	
+  	<insert id="cal_write" parameterType="child.calendar.model.calDTO">
+  		insert into 
+  			child_schedule 
+  		values (
+  			child_schedule_idx.nextval,
+  			#{cal_subject},
+  			#{cal_date},
+  			#{cal_time},
+  			#{cal_content},
+  			#{cal_map}
+  		)
+  	</insert>
+  	
+  	<select id="cal_edit" parameterType="Integer" resultType="child.calendar.model.calDTO">
+  		select * from child_schedule where idx=#{idx}
+  	</select>
+  	
+  	<update id="cal_update" parameterType="child.calendar.model.calDTO">
+  		update child_schedule
+  		set
+  		cal_subject = #{cal_subject},
+  		cal_date = #{cal_date},
+  		cal_time = #{cal_time},
+  		cal_content = #{cal_content},
+  		cal_map = #{cal_map}
+  		where idx = #{idx}
+  	</update>
+  	
+  	<delete id="cal_delete" parameterType="Integer">
+  		delete from child_schedule where idx = #{idx}
+  	</delete>
+ </mapper>

@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="child.roll">      
+   
+   <select id="roll_list" resultType="child.member.model.memberDTO" parameterType="String">
+   <if test="roll_class !='all'">
+   <![CDATA[
+      select * from child_member where idx not in
+         (select idx from 
+         (select a.idx as idx, b.member_idx as member_idx, b.roll_date from child_member a, child_rollbook b where a.idx = b.member_idx)c
+         where roll_date >= to_char(sysdate,'yyyy-mm-dd') and roll_date < to_char(sysdate+1,'yyyy-mm-dd')) 
+         and namechild is not null and groupchild is not null and groupchild = #{roll_class} and auth <4
+         order by groupchild asc
+   ]]>
+   </if>
+    <if test="roll_class =='all'">
+      <![CDATA[
+         select * from child_member where idx not in
+         (select idx from 
+         (select a.idx as idx, b.member_idx as member_idx, b.roll_date from child_member a, child_rollbook b where a.idx = b.member_idx)c
+         where roll_date >= to_char(sysdate,'yyyy-mm-dd') and roll_date < to_char(sysdate+1,'yyyy-mm-dd')) 
+         and namechild is not null and groupchild is not null and auth <4
+         order by groupchild asc
+      ]]>
+   </if>  
+   </select>
+   <insert id="roll_save" parameterType="child.roll.model.rollDTO">
+   <![CDATA[
+      insert into child_rollbook values(child_rollbook_idx.nextval,
+      #{member_idx},
+      #{roll_name},
+      sysdate,
+      #{roll_info},
+      #{roll_class})
+   ]]>
+   </insert>
+   
+   <select id="roll_savelist" resultType="child.roll.model.rollDTO" >
+      <![CDATA[
+         select * from child_rollbook order by member_idx asc
+      ]]>
+   </select>
+   
+   <select id="roll_dateSer" resultType="child.roll.model.rollDTO" parameterType="String">
+   
+      <if test="roll_class !='all'">
+      <![CDATA[
+      
+      select * from child_rollbook where roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class=#{roll_class} order by member_idx asc
+      
+      ]]>
+      </if>
+      <if test="roll_class =='all'">
+      <![CDATA[
+      
+      select * from child_rollbook where roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class is not null order by member_idx asc
+      
+      ]]>
+      </if>
+      
+   </select>
+   
+   <update id="roll_update" parameterType="child.roll.model.rollDTO">
+   <![CDATA[
+   update child_rollbook
+      set
+         roll_info=#{roll_info}
+      where idx=#{idx}
+   ]]>
+   </update>
+
+   <select id="roll_info1" resultType="Integer" parameterType="String">
+      <if test="roll_class !='all'">
+      <![CDATA[
+      
+      select count(*) from child_rollbook where roll_info = 1 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class=#{roll_class} order by idx desc
+      
+      ]]>
+      </if>
+      <if test="roll_class =='all'">
+      <![CDATA[
+      
+      select count(*) from child_rollbook where roll_info = 1 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class is not null order by idx desc
+      
+      ]]>
+      </if>
+   
+   </select>
+
+   <select id="roll_info2" resultType="Integer" parameterType="String">
+   <if test="roll_class !='all'">
+   <![CDATA[
+   
+   select count(*) from child_rollbook where roll_info = 2 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class=#{roll_class} order by idx desc
+   
+   ]]>
+   </if>
+   <if test="roll_class =='all'">
+   <![CDATA[
+   
+   select count(*) from child_rollbook where roll_info = 2 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class is not null order by idx desc
+   
+   ]]>
+   </if>
+
+   </select>
+   
+      <select id="roll_info3" resultType="Integer" parameterType="String">
+   <if test="roll_class !='all'">
+   <![CDATA[
+   
+   select count(*) from child_rollbook where roll_info = 3 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class=#{roll_class} order by idx desc
+   
+   ]]>
+   </if>
+   <if test="roll_class =='all'">
+   <![CDATA[
+   
+   select count(*) from child_rollbook where roll_info = 3 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class is not null order by idx desc
+   
+   ]]>
+   </if>
+
+   </select>
+   
+         <select id="roll_info4" resultType="Integer" parameterType="String">
+   <if test="roll_class !='all'">
+   <![CDATA[
+   
+   select count(*) from child_rollbook where roll_info = 4 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class=#{roll_class} order by idx desc
+   
+   ]]>
+   </if>
+   <if test="roll_class =='all'">
+   <![CDATA[
+   
+   select count(*) from child_rollbook where roll_info = 4 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class is not null order by idx desc
+   
+   ]]>
+   </if>
+
+   </select>
+   
+         <select id="roll_info5" resultType="Integer" parameterType="String">
+   <if test="roll_class !='all'">
+   <![CDATA[
+   
+   select count(*) from child_rollbook where roll_info = 5 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class=#{roll_class} order by idx desc
+   
+   ]]>
+   </if>
+   <if test="roll_class =='all'">
+   <![CDATA[
+   
+   select count(*) from child_rollbook where roll_info = 5 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class is not null order by idx desc
+   
+   ]]>
+   </if>
+
+   </select>
+   
+   <select id="roll_info6" resultType="Integer" parameterType="String">
+   <if test="roll_class !='all'">
+   <![CDATA[
+   
+   select count(*) from child_rollbook where roll_info = 6 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class=#{roll_class} order by idx desc
+   
+   ]]>
+   </if>
+   <if test="roll_class =='all'">
+   <![CDATA[
+   
+   select count(*) from child_rollbook where roll_info = 6 and roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class is not null order by idx desc
+   
+   ]]>
+   </if>
+
+   </select>
+   
+   <select id="infoSer" resultType="child.roll.model.rollDTO" parameterType="String">
+      <if test="roll_class !='all'">
+      <![CDATA[
+      
+      select * from child_rollbook where roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class=#{roll_class} and roll_info=#{roll_info} order by member_idx asc
+      
+      ]]>
+      </if>
+      <if test="roll_class =='all'">
+      <![CDATA[
+      
+      select * from child_rollbook where roll_date >= #{date} and roll_date < TO_DATE(#{date})+1 and roll_class is not null and roll_info=#{roll_info} order by member_idx asc
+      
+      ]]>
+      </if>
+   </select>   
+   
+   <!-- 일일 출석 -->
+   
+   <select id="attPer" resultType="Integer" parameterType="String">
+   <![CDATA[
+     select count(*) from child_rollbook where 
+       to_char(roll_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd')  
+   ]]>
+   </select>
+   
+   <select id="attenden" resultType="Integer" parameterType="String">
+   <![CDATA[
+      select count(*) from (select * from child_rollbook where 
+      to_char(roll_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd'))a where roll_info=1 or roll_info=5
+   ]]>
+   </select>
+   
+   <select id="absent" resultType="Integer" parameterType="String">
+      <![CDATA[
+      select count(*) from (select * from child_rollbook where 
+      to_char(roll_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd'))a where roll_info=2 or roll_info=6
+   ]]>
+   </select>
+
+   <select id="guitar" resultType="Integer" parameterType="String">
+   <![CDATA[
+         select count(*) from (select * from child_rollbook where 
+      to_char(roll_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd'))a where roll_info=4 or roll_info=3
+   ]]>
+   </select>
+   
+   <!-- 주간 출석 -->
+   
+   
+   <select id="WeattPer" resultType="Integer" parameterType="String">
+   <![CDATA[
+      select count(*) from child_rollbook where 
+       roll_date > to_char(sysdate-8,'yyyy-mm-dd')   
+       and roll_date < to_char(sysdate+1,'yyyy-mm-dd')
+   ]]>
+   </select>
+   
+   <select id="Weattenden" resultType="Integer" parameterType="String">
+   <![CDATA[
+      select count(*) from (select * from child_rollbook where 
+      roll_date > to_char(sysdate-8,'yyyy-mm-dd')
+      and roll_date < to_char(sysdate+1,'yyyy-mm-dd'))a where roll_info=1 or roll_info=5
+   ]]>
+   </select>
+   
+   <select id="Weabsent" resultType="Integer" parameterType="String">
+      <![CDATA[
+      select count(*) from (select * from child_rollbook where 
+      roll_date > to_char(sysdate-8,'yyyy-mm-dd')
+      and roll_date < to_char(sysdate+1,'yyyy-mm-dd'))a where roll_info=2 or roll_info=6
+   ]]>
+   </select>
+
+   <select id="Weguitar" resultType="Integer" parameterType="String">
+   <![CDATA[
+         select count(*) from (select * from child_rollbook where 
+      roll_date > to_char(sysdate-8,'yyyy-mm-dd')
+      and roll_date < to_char(sysdate+1,'yyyy-mm-dd'))a where roll_info=4 or roll_info=3
+   ]]>
+   </select>
+   
+   <!-- 월간 출석 -->
+   
+   <select id="MoattPer" resultType="Integer" parameterType="String">
+   <![CDATA[
+      select count(*) from child_rollbook where 
+       roll_date > to_char(sysdate-31,'yyyy-mm-dd')   
+       and roll_date < to_char(sysdate+1,'yyyy-mm-dd')
+   ]]>
+   </select>
+   
+   <select id="Moattenden" resultType="Integer" parameterType="String">
+   <![CDATA[
+      select count(*) from (select * from child_rollbook where 
+      roll_date > to_char(sysdate-31,'yyyy-mm-dd')
+      and roll_date < to_char(sysdate+1,'yyyy-mm-dd'))a where roll_info=1 or roll_info=5
+   ]]>
+   </select>
+   
+   <select id="Moabsent" resultType="Integer" parameterType="String">
+      <![CDATA[
+       select count(*) from (select * from child_rollbook where 
+      roll_date > to_char(sysdate-31,'yyyy-mm-dd')
+      and roll_date < to_char(sysdate+1,'yyyy-mm-dd'))a where roll_info=2 or roll_info=6
+   ]]>
+   </select>
+
+   <select id="Moguitar" resultType="Integer" parameterType="String">
+   <![CDATA[
+        select count(*) from (select * from child_rollbook where 
+      roll_date > to_char(sysdate-31,'yyyy-mm-dd')
+      and roll_date < to_char(sysdate+1,'yyyy-mm-dd'))a where roll_info=4 or roll_info=3
+   ]]>
+   </select>
+   
+   <!-- 자기반 출석 -->
+   
+   <select id="MyattPer" resultType="Integer" parameterType="String">
+   <![CDATA[
+       select count(*) from (select * from child_rollbook where 
+      to_char(roll_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd'))a
+       where roll_class=#{groupchild}
+   ]]>
+   </select>
+   
+   <select id="Myattenden" resultType="Integer" parameterType="String">
+   <![CDATA[
+      select count(*) from (select * from child_rollbook where 
+      to_char(roll_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd'))a
+       where (roll_info=1 or roll_info=5) and roll_class=#{groupchild}
+   ]]>
+   </select>
+   
+   <select id="Myabsent" resultType="Integer" parameterType="String">
+      <![CDATA[
+      select count(*) from (select * from child_rollbook where 
+      to_char(roll_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd'))a
+       where (roll_info=2 or roll_info=6) and roll_class=#{groupchild}
+   ]]>
+   </select>
+
+   <select id="Myguitar" resultType="Integer" parameterType="String">
+   <![CDATA[
+         select count(*) from (select * from child_rollbook where 
+      to_char(roll_date,'yyyy-mm-dd') = to_char(sysdate,'yyyy-mm-dd'))a
+       where (roll_info=4 or roll_info=3) and roll_class=#{groupchild}
+   ]]>
+   </select>
+   
+   <!-- 원장님 전용 -->
+   
+   <select id="BoattPer" resultType="Integer" parameterType="String">
+   <![CDATA[
+      select count(*) from child_rollbook   
+   ]]>
+   </select>
+   
+   <select id="Boattenden" resultType="Integer" parameterType="String">
+   <![CDATA[
+      select count(*) from child_rollbook where roll_info=1 or roll_info=5
+   ]]>
+   </select>
+   
+   <select id="Boabsent" resultType="Integer" parameterType="String">
+      <![CDATA[
+      select count(*) from child_rollbook where roll_info=2 or roll_info=6
+   ]]>
+   </select>
+
+   <select id="Boguitar" resultType="Integer" parameterType="String">
+   <![CDATA[
+         select count(*) from child_rollbook where roll_info=4 or roll_info=3
+   ]]>
+   </select>
+   
+  </mapper>

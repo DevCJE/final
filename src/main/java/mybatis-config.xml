@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  <configuration>
+  	<mappers>
+  		<mapper resource="sql/memberSQL.xml"/>
+  	 	<mapper resource="sql/albumSQL.xml"/>
+  	 	<mapper resource="sql/menuSQL.xml"/>	
+  	 	<mapper resource="sql/noteSQL.xml"/>
+  	 	<mapper resource="sql/noticeSQL.xml"/>
+  	 	<mapper resource="sql/consentSQL.xml"/>
+  	 	<mapper resource="sql/calendarSQL.xml"/>
+  	 	<mapper resource="sql/rollSQL.xml"/>
+  	 	<mapper resource="sql/dosingSQL.xml"/>
+  	 	<mapper resource="sql/memberAdminSQL.xml"/>
+  	 	<mapper resource="sql/itnMsgSQL.xml"/>
+  	 	<mapper resource="sql/documentSQL.xml"/>
+   	 </mappers>
+  </configuration>

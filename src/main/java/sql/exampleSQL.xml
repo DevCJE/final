@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  
+  <!-- 
+  <mapper namespace="yong.bbs">
+ 	<select id="bbsList" resultType="yong.bbs.model.BbsDTO" parameterType="hashmap">
+ 		<![CDATA[
+ 			select * from
+ 				(select rownum as rnum, a.* from (select * from jsp_bbs order by ref desc, sunbun)a where rownum <= #{endCp} ) b
+ 					where rnum >= #{startCp}
+ 		]]>
+ 	</select>
+ 	<select id="bbsCount" resultType="Integer">
+ 		<![CDATA[
+ 			select count(*) from jsp_bbs
+ 		]]>
+ 	</select>
+ 	<insert id="bbsWrite" parameterType="yong.bbs.model.BbsDTO">
+ 		<![CDATA[
+ 			insert into jsp_bbs
+ 			values
+ 			(jsp_bbs_idx.nextval,#{writer},#{pwd},#{subject},#{content},sysdate,0,0,0,0)
+ 		]]>
+ 	</insert>
+ 	<select id="bbsContent" resultType="yong.bbs.model.BbsDTO">
+ 		 <![CDATA[
+ 			select * from jsp_bbs 
+ 				where idx = #{idx}
+ 					order by idx desc
+ 		]]>
+ 	</select>
+  </mapper>
+   -->

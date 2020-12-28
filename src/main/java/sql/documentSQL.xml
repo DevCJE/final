@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="child.document">
+ 	<select id="searchMem" parameterType="String" resultType="String">
+ 		select name from child_member where name=#{name} and auth>=4
+ 	</select>
+ 	
+ 	<select id="doc_ListByIdx" parameterType="String" resultType="String">
+ 		select sign1 from child_document_confirm where idx = #{idx}
+ 	</select>
+ 	
+ 	
+ 	
+ 	<insert id="doc_write" parameterType="child.document.model.docDTO">
+		insert into
+			child_document_confirm
+		values (
+			child_document_confirm_idx.nextval,
+			#{subject},
+			#{name1},
+			#{name2},
+			#{state},
+			#{confirm_date},
+			#{sign1},
+			null,
+			#{document} 
+			)	
+ 	</insert>
+ 	
+ 	<select id="doc_state" resultType="child.document.model.docDTO">
+ 		<![CDATA[
+        	select * from 
+        	(select rownum as rnum,a.* from 
+        	(select * from child_document_confirm where name1=#{name})a)b 
+        	where rnum>=#{start} and rnum<=#{end} order by idx
+        ]]>
+ 	</select>
+ 	
+ 	<select id="doc_sign" resultType="child.document.model.docDTO">
+ 		<![CDATA[
+        	select * from 
+        	(select rownum as rnum,a.* from 
+        	(select * from child_document_confirm where name2=#{name} and state=0 or state=4)a)b 
+        	where rnum>=#{startnum} and rnum<=#{endnum} order by idx
+        ]]>
+ 	</select>
+ 	
+ 	<update id="not_update" parameterType="Integer">
+ 		update child_document_confirm
+ 		set
+ 		state=3
+ 		where idx=#{idx}
+ 	</update>
+ 	
+ 	<update id="update" parameterType="child.document.model.docDTO">
+ 		update child_document_confirm
+ 		set
+ 			sign2=#{sign2},
+ 			state=1
+ 		where idx=#{idx}
+ 	</update>
+ 	
+ 	<select id="edit" parameterType="Integer" resultType="child.document.model.docDTO">
+ 		select * from child_document_confirm where idx=#{idx}
+ 	</select>
+ 	
+ 	<update id="editup" parameterType="child.document.model.docDTO">
+ 		update child_document_confirm
+ 		set
+ 			name2 = #{name2},
+ 			state = 4,
+ 			sign1 = #{sign1},
+ 			document=#{document}
+ 		where idx=#{idx}
+ 	</update>
+ 	
+ 	<insert id="insertdoc" parameterType="child.document.model.wdocDTO">
+ 		insert into 
+ 			child_document_write
+ 		values(
+ 			child_document_write_idx.nextval,
+ 			#{subject},
+ 			#{last_date},
+ 			#{doc_addr}
+ 		)
+ 	</insert>
+ 	
+ 	<select id="getList" resultType="child.document.model.wdocDTO">
+ 		<![CDATA[
+        	select * from 
+        	(select rownum as rnum,a.* from 
+        	(select * from child_document_write)a)b 
+        	where rnum>=#{start} and rnum<=#{end} order by idx
+        ]]>
+ 	</select>
+ 	
+ 	<select id="signTotal" parameterType="String" resultType="Integer">
+ 		select count(*) from child_document_confirm where name2 = #{name2}
+ 	</select>
+ 	
+ 	<select id="stateTotal" parameterType="String" resultType="Integer">
+ 		select count(*) from child_document_confirm where name1=#{name1}
+ 	</select>
+ 	
+ 	<delete id="deleteAll">
+ 		delete from child_document_write
+ 	</delete>
+ 	
+ 	<select id="listCall" parameterType="String" resultType="child.document.model.docDTO">
+ 		<![CDATA[
+ 			select rownum, a.* from (select * from child_document_confirm where name1=#{name})a
+ 			where rownum<=5 order by idx desc
+ 		]]>
+ 	</select>
+ </mapper>

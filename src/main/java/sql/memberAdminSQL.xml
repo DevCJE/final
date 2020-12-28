@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="child.admin">
+     <select id="te_adminForm" resultType="child.member.model.memberDTO">
+        <![CDATA[
+        	select * from 
+        	(select rownum as rnum,a.* from 
+        	(select * from child_member where auth=4 and state='on' order by idx desc)a)b 
+        	where rnum>=#{startNum} and rnum<=#{endNum} 
+        ]]>
+     </select>
+     <select id="teNo_adminForm" resultType="child.member.model.memberDTO">
+        <![CDATA[
+        	select * from 
+        	(select rownum as rnum,a.* from 
+        	(select * from child_member where auth=2 and state='on' order by idx desc)a)b 
+        	where rnum>=#{startNum} and rnum<=#{endNum} 
+        ]]>
+     </select>
+     <select id="ch_adminForm" resultType="child.member.model.memberDTO">
+      <![CDATA[
+        	select * from 
+        	(select rownum as rnum,a.* from 
+        	(select * from child_member where auth=3 and state='on' order by idx desc)a)b 
+        	where rnum>=#{startNum} and rnum<=#{endNum} 
+        ]]>
+     </select>
+     <select id="chNo_adminForm" resultType="child.member.model.memberDTO">
+      <![CDATA[
+        	select * from 
+        	(select rownum as rnum,a.* from 
+        	(select * from child_member where auth=1 and state='on' order by idx desc)a)b 
+        	where rnum>=#{startNum} and rnum<=#{endNum} 
+        ]]>
+     </select>
+     
+     <update id="banChange" parameterType="child.member.model.memberDTO">
+       update child_member
+         set groupchild=#{groupchild} where id=#{id}       
+     </update>
+     
+     <update id="teDelete" parameterType="child.member.model.memberDTO">
+       update child_member 
+       set state='off' where idx=#{idx}       
+     </update>
+     
+     <update id="teacherOk" parameterType="child.member.model.memberDTO">
+       update child_member 
+       set auth=4 where idx=#{idx}
+       
+     </update>
+     
+     <update id="teacherNo" parameterType="child.member.model.memberDTO">
+       update child_member 
+       set state='off' where idx=#{idx}      
+     </update>
+     
+     <update id="chDelete" parameterType="child.member.model.memberDTO">
+       update child_member 
+       set state='off' where idx=#{idx}       
+     </update>
+     <update id="childOk" parameterType="child.member.model.memberDTO">
+       update child_member 
+       set auth=3 where idx=#{idx}
+     </update>
+     <update id="childNo" parameterType="child.member.model.memberDTO">
+       update child_member 
+       set state='off' where idx=#{idx}      
+     </update>
+     <update id="chBanChange" parameterType="child.member.model.memberDTO">
+       update child_member
+         set groupchild=#{groupchild} where id=#{id}       
+     </update>
+     <select id="chSearch" resultType="child.member.model.memberDTO" parameterType="hashmap">
+      <if test="serchgroup == 'name'">
+	        <![CDATA[
+		     	select * from child_member where name=#{chsearch} and state='on' and auth=3
+		   	]]>
+	  </if>
+	  <if test="serchgroup == 'namechild'">
+	        <![CDATA[
+		     	select * from child_member where namechild=#{chsearch} and state='on' and auth=3
+		   	]]>
+	  </if>
+     </select>
+     <select id="chNoSearch" resultType="child.member.model.memberDTO" parameterType="hashmap">
+      <if test="serchgroup == 'name'">
+	        <![CDATA[
+		     	select * from child_member where name=#{chsearch} and state='on' and auth=1
+		   	]]>
+	  </if>
+	  <if test="serchgroup == 'namechild'">
+	        <![CDATA[
+		     	select * from child_member where namechild=#{chsearch} and state='on' and auth=1
+		   	]]>
+	  </if>
+     </select>   
+     <select id="teSearch" resultType="child.member.model.memberDTO">
+       select * from child_member where name=#{tesearch} and state='on' and auth=4
+     </select>
+     <select id="teNoSearch" resultType="child.member.model.memberDTO">
+       select * from child_member where name=#{tesearch} and state='on' and auth=2
+     </select>
+     <select id="chNogetTotal" resultType="int">
+    	 select count(*) from child_member where auth=1 and state='on'     
+     </select>
+     <select id="chgetTotal" resultType="int">
+    	 select count(*) from child_member where auth=3 and state='on'     
+     </select> 
+     <select id="teNogetTotal" resultType="int">
+    	 select count(*) from child_member where auth=2 and state='on'    
+     </select> 
+     <select id="tegetTotal" resultType="int">
+    	 select count(*) from child_member where auth=4 and state='on'    
+     </select>       
+     
+  </mapper>
+  

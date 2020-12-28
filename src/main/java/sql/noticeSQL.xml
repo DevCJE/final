@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="child.notice">
+ 	
+ 	<insert id="noticeWrite" parameterType="child.notice.model.noticeDTO">
+ 	insert into child_notice values(child_notice_idx.nextval,#{subject},#{content},0,sysdate)
+ 	</insert>
+ 	
+ 	<select id="noticeList" resultType="child.notice.model.noticeDTO" parameterType="hashmap">
+ 	<![CDATA[
+   		 select * from
+    	(select rownum as rnum,a.* from(select * from child_notice order by idx desc)a)b 
+    	where rnum>=#{startNum} and rnum<=#{endNum} 
+	]]>
+	</select>
+		
+	<select id="getTotalCnt" resultType="int">
+	select count(*) from child_notice
+	</select>
+	
+	<select id="noticeContent" resultType="child.notice.model.noticeDTO" parameterType="int"> 
+  	select * from child_notice where idx=#{idx}
+  	</select>
+  	
+  	<delete id="noticeDelete" parameterType="Integer">
+	delete child_notice where idx=#{idx}
+	</delete>
+	
+	<update id="plusReadNum" parameterType="Integer">
+	update child_notice set readnum=readnum+1 where idx=#{idx}
+	</update>
+	
+	<update id="noticeUpdate" parameterType="child.notice.model.noticeDTO">
+	update child_notice set subject=#{subject}, content=#{content} where idx=#{idx}
+	</update>
+	
+	<select id="nSearchGetTotalCnt" resultType="int" parameterType="map">
+	select count(*) from child_notice
+	<where>
+			<if test="select == 'subject'">
+			subject like '%'||#{keyword}||'%'
+			</if>
+			<if test="select == 'content'">
+			content like '%'||#{keyword}||'%'
+			</if>
+	</where>
+	</select>
+	
+	<select id="nSearchList" resultType="child.notice.model.noticeDTO" parameterType="map">
+	
+	        <if test="select == 'subject'">
+	        <![CDATA[
+		     	select * from 
+	        	(select rownum as rnum,a.* from 
+	        	(select * from child_notice
+	        		where subject like '%'||#{keyword}||'%'
+	        	order by idx desc)a)b 
+	        	where rnum>=#{startNum} and rnum<=#{endNum} 
+		   	]]>
+	   		</if>
+	   		
+            <if test="select == 'content'">
+	        <![CDATA[
+		     	select * from 
+	        	(select rownum as rnum,a.* from 
+	        	(select * from child_notice
+	        		where content like '%'||#{keyword}||'%'
+	        	order by idx desc)a)b 
+	        	where rnum>=#{startNum} and rnum<=#{endNum} 
+		   	]]>
+	  	 	</if>
+	</select>
+  </mapper>

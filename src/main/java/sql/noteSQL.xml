@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="child.note">		
+  	<select id="totalcnt" resultType="int">
+  		<![CDATA[
+  			select count(*) from child_note
+  		]]>
+  	</select>
+	
+	  <select id="note_list" resultType="child.note.model.noteDTO">
+	  	<![CDATA[ 		
+				select * from 
+        	(select rownum as rnum,a.* from 
+        	(select * from child_note order by idx desc)a)b 
+        	where rnum>=#{startNum} and rnum<=#{endNum} 
+			]]>
+	  	</select>
+  	
+  	<select id="note_content" resultType="child.note.model.noteDTO" parameterType="Integer">
+  		<![CDATA[
+	  		select * from child_note
+	  		where idx = #{idx}
+	  	]]>
+  	</select>
+
+	<insert id="note_write" parameterType="child.note.model.noteDTO">
+	
+			insert into child_note 
+				values(
+					child_note_idx.nextval,
+					#{note_select}, sysdate,
+					#{note_content},
+					#{note_img},
+					null,
+					#{note_need},
+					#{note_writer})		
+	</insert>
+	
+	<select id="note_updateForm" resultType="child.note.model.noteDTO" parameterType="Integer">
+		select * from child_note where idx = #{idx}
+	</select>
+
+	<update id="note_update" parameterType="child.note.model.noteDTO">
+		<![CDATA[
+			
+			update child_note
+				set
+					note_select=#{note_select},
+					note_content=#{note_content},
+					note_img=#{note_img},
+					note_need=#{note_need},
+					note_writer=#{note_writer}
+				where idx= #{idx}
+					
+		]]>
+	</update>
+	
+	<delete id="note_del" parameterType="child.note.model.noteDTO">
+	
+		<![CDATA[
+			delete from child_note
+				where idx=#{idx}
+		
+		]]>
+	
+	</delete>
+	
+	<select id="noteco_list" resultType="child.note.model.notecoDTO" parameterType="Integer">
+		<![CDATA[
+			select * from child_note_comment where note_idx=#{note_idx}
+		]]>
+	</select>
+
+	<insert id="noteco_write" parameterType="child.note.model.notecoDTO">
+		<![CDATA[
+			insert into 
+			child_note_comment 
+			values(child_note_comment_idx.nextval,#{note_idx},#{note_comment_writer},#{note_comment_content},sysdate)
+		]]>
+	</insert>
+	
+	<delete id="noteco_del" parameterType="child.note.model.noteDTO">
+	
+		<![CDATA[
+			delete from child_note_comment
+			where idx=#{idx_comt}
+		]]>
+	</delete>
+	
+	<select id="noteSearch" resultType="child.note.model.noteDTO" parameterType="Map">
+	   	<![CDATA[
+	     	select * from 
+        	(select rownum as rnum,a.* from 
+        	(select * from child_note where 
+        	note_select like '%'||#{keyword}||'%' or note_content like '%'||#{keyword}||'%' or note_writer like '%'||#{keyword}||'%' 
+        	order by idx desc)a)b 
+        	where rnum>=#{startNum} and rnum<=#{endNum} 
+	   	]]>
+   </select>
+     <select id="findTotal" resultType="int" parameterType="Map">
+      <![CDATA[
+  			select count(*) from 
+  				child_note 
+  			where 
+  				note_select like '%'||#{keyword}||'%' or note_content like '%'||#{keyword}||'%' or note_writer like '%'||#{keyword}||'%' 
+        	order by idx desc
+		]]>	
+     </select>
+     <select id="note_dateSerach" resultType="child.note.model.noteDTO" parameterType="String">
+     <![CDATA[
+     select * from child_note where note_writedate >=to_date(#{calenderstart}) and note_writedate <=to_date(#{calenderend})+0.99999 order by idx desc
+     
+     ]]>
+     </select>
+     <select id="dateTotal" resultType="int" parameterType="Map">
+     	<![CDATA[
+     		select count(*) from 
+  				child_note 
+  			where 
+  				note_writedate >=to_date(#{calenderstart}) and note_writedate <=to_date(#{calenderend})+0.99999
+			order by idx desc
+     	]]>
+     
+     </select>
+
+  </mapper>

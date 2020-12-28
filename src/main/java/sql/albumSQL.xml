@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="child.album">
+  	<select id="albumList" resultType="child.album.model.AlbumDTO" parameterType="Map">
+		<![CDATA[
+        	select * from 
+        	(select rownum as rnum,a.* from 
+        	(select * from child_album order by idx desc)a)b 
+        	where rnum>=#{startNum} and rnum<=#{endNum} 
+        ]]>   
+  	</select>
+  	<select id="totalCnt" resultType="int">
+  		<![CDATA[
+  			select count(*) from child_album
+  		]]>
+  	</select>
+  	<insert id="albumWriter" parameterType="child.album.model.AlbumDTO">
+  		<![CDATA[
+  			insert into 
+  				child_album 
+  			values(
+  				child_album_idx.nextval,1,
+				#{album_subject}, 
+				#{album_content},
+				#{album_photo},
+				0, sysdate,
+				#{album_child_class},
+				#{album_child_name})
+		]]>
+  	</insert>
+  	<select id="albumContent" resultType="child.album.model.AlbumDTO" parameterType="int"> 
+  		<![CDATA[
+  			select * from 
+  				child_album 				
+  			 where idx=#{idx}
+  		]]>
+  	</select>
+  	<select id="albumContentList" resultType="child.album.model.AlbumDTO" parameterType="int"> 
+  		<![CDATA[
+  			select * from 
+  				child_album 				
+  			where idx<> #{idx}
+       		order by idx desc
+  		]]>
+  	</select>
+  	<select id="albumUpdate" resultType="child.album.model.AlbumDTO" parameterType="Integer">
+  		<![CDATA[
+  			select * from
+  				child_album 
+  			where 
+  				idx = #{idx}
+  		]]>
+  	</select>  	
+  	<update id="albumUpdateOk" parameterType="child.album.model.AlbumDTO">
+  		<![CDATA[
+  			update child_album set
+  				album_subject = #{album_subject},
+  				album_content = #{album_content},
+  				album_photo = #{album_photo},
+  				album_child_class = #{album_child_class},
+				album_child_name = #{album_child_name}
+  			where idx = #{idx}	
+  		]]>
+  	</update>
+  	<delete id="albumDel" parameterType="child.album.model.AlbumDTO">
+  		<![CDATA[
+			delete from
+				child_album 
+			where 
+				idx = #{idx} 
+  		]]>
+  	</delete>
+  	<update id="albumViewer" parameterType="int">
+  		<![CDATA[
+  			update 
+  				child_album 
+  			set 
+  				album_viewer =  album_viewer+1 
+  			where 
+  				idx = #{idx}
+  		]]>
+  	</update>
+  	<select id="findTotalCnt" resultType="int" parameterType="Map">
+  		<if test ="selectBox == 'album_content'">
+  		  <![CDATA[
+  			select count(*) from 
+  				child_album 
+  			where 
+  				album_content like '%'||#{keyword}||'%'
+  			order by idx desc
+		]]>	
+  		</if>
+  		<if test ="selectBox == 'album_subject'">
+  		<![CDATA[
+  			select count(*) from 
+  				child_album 
+  			where 
+  				album_subject like '%'||#{keyword}||'%'
+  			order by idx desc
+		]]>
+		</if>	
+  	</select>  	
+  	<select id="alumFind" resultType="child.album.model.AlbumDTO" parameterType="Map">
+     		<if test="selectBox == 'album_content'">
+     		<![CDATA[
+				select * from 
+	        	(select rownum as rnum,a.* from 
+	        	(select * from child_album
+	        		where album_content like '%'||#{keyword}||'%'
+	        	order by idx desc)a)b 
+	        	where rnum>=#{startNum} and rnum<=#{endNum}	 
+	        ]]>	 
+     		</if>
+     		<if test ="selectBox == 'album_subject'">
+     		<![CDATA[
+				select * from 
+	        	(select rownum as rnum,a.* from 
+	        	(select * from child_album
+	        		where album_subject like '%'||#{keyword}||'%'
+	        	order by idx desc)a)b 
+	        	where rnum>=#{startNum} and rnum<=#{endNum}
+	        ]]>	 
+  			</if>
+  	</select>	
+  	<select id="albumCalenderTotalCnt" resultType="Integer" parameterType="Map">
+  		<![CDATA[
+  			select count(*) from child_album
+			where album_date >= #{calenderstart} and album_date <= TO_DATE(#{calenderend})+0.99999		
+  		]]>
+  	</select>
+  	<select id="albumcalender" resultType="child.album.model.AlbumDTO" parameterType="Map">
+  		<![CDATA[
+		 	select * from
+ 			(select rownum as rnum, a.* from (select * from child_album
+ 			where album_date >= #{calenderstart} and album_date <= TO_DATE(#{calenderend})+0.99999
+ 			order by idx desc)a where rownum <= #{endNum})b
+ 			where rnum >= #{startNum}
+  		]]>	
+  	</select>
+  	 	 	 	
+  	<select id="albumCmtList" parameterType="Integer" resultType="child.album.model.AlbumCommentDTO">
+  		<![CDATA[
+  			select * from child_album_content
+  				where album_idx = #{idx}
+  		]]>
+  	</select>
+  	<insert id="albumCmtWrite"  parameterType="child.album.model.AlbumCommentDTO">
+  		<![CDATA[
+  			insert into 
+  				child_album_content 
+  			values(
+  				child_album_content_idx.nextval,#{album_idx},
+				#{album_comment_writer}, 
+				#{album_comment_content},sysdate)
+		]]>	
+  	</insert>
+  	<delete id="albumCmtDel" parameterType="child.album.model.AlbumCommentDTO">
+  		<![CDATA[
+  			delete from
+  				child_album_content
+  			where 
+  				idx = #{idx}	
+  		]]>	
+  	</delete>
+  </mapper>
+  
